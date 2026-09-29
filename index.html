@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALESSANDRO MARCATELLI // BOUNTY DATA FILE</title>
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fogli di Stile Personalizzato -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Configurazione Tema Tailwind Personalizzato -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bebop: {
+                            bg: '#080810',
+                            panel: '#0f111a',
+                            card: '#161925',
+                            cyan: '#00f0ff',
+                            red: '#ff0055',
+                            gold: '#fcee0a',
+                            amber: '#ff9900',
+                            green: '#00ff66',
+                            dim: '#5c7e8c',
+                            text: '#d1f7ff'
+                        }
+                    },
+                    fontFamily: {
+                        orbitron: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        mono: ['Share Tech Mono', 'monospace'],
+                        pixel: ['VT323', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="space-bg font-rajdhani text-bebop-text min-h-screen relative overflow-x-hidden antialiased selection:bg-bebop-red selection:text-white">
+
+    <!-- Elemento Audio per Musica di Sottofondo (Seatbelts - Road to the West) -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://archive.org/download/cowboy-bebop-ost-3/15%20Road%20to%20the%20West.mp3" type="audio/mpeg">
+        <source src="https://archive.org/download/Cowboy-Bebop-OST-Collection/Cowboy%20Bebop%20Original%20Soundtrack%203%20Blue/15%20Road%20to%20the%20West.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Overlay Filtro CRT Scanlines -->
+    <div id="crtOverlay" class="crt-overlay fixed inset-0 z-50 pointer-events-none"></div>
+    <!-- Griglia Spaziale HUD -->
+    <div class="grid-bg fixed inset-0 z-0 pointer-events-none"></div>
+
+    <!-- Barra Superiore Ticker Bebop -->
+    <div class="bg-bebop-amber text-black font-orbitron font-black text-xs px-4 py-1.5 uppercase tracking-widest flex justify-between items-center border-b-2 border-bebop-red relative z-20">
+        <div class="flex items-center gap-3">
+            <span class="bg-black text-bebop-gold px-1.5 py-0.5 text-[10px] font-mono">SYS_NET v3.04</span>
+            <span class="hidden sm:inline">ALESSANDRO MARCATELLI // BOUNTY DATA FILE</span>
+        </div>
+    </div>
+
+    <!-- CONTENITORE PRINCIPALE -->
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+
+        <!-- INTESTAZIONE PRINCIPALE -->
+        <header class="mb-8 border-b-2 border-bebop-red/60 pb-4 relative">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-bebop-red text-black font-orbitron font-black text-xs px-2 py-0.5 uppercase tracking-widest">SYSADMIN </span>
+                        <span class="font-mono text-bebop-cyan text-xs tracking-widest">// CGIL RIMINI SYSTEM OPERATIVE</span>
+                    </div>
+                    <h1 class="font-orbitron font-black text-3xl sm:text-5xl text-white tracking-wider uppercase mt-1 glow-gold">
+                        ALESSANDRO <span class="text-bebop-cyan glow-cyan">MARCATELLI</span>
+                    </h1>
+                </div>
+
+                <!-- Pulsanti di Controllo Interattivi -->
+                <div class="no-print flex items-center flex-wrap gap-2">
+                    <button id="musicToggleBtn" onclick="toggleMusic()" class="px-3 py-1.5 bg-bebop-panel border border-bebop-amber hover:border-bebop-gold text-xs font-mono flex items-center gap-2 rounded transition-colors box-glow-gold">
+                        <i id="musicIcon" class="fas fa-music text-bebop-amber"></i>
+                        <span id="musicText">MUSIC: OFF</span>
+                    </button>
+
+                    <button id="soundToggleBtn" onclick="toggleSound()" class="px-3 py-1.5 bg-bebop-panel border border-bebop-dim hover:border-bebop-cyan text-xs font-mono flex items-center gap-2 rounded transition-colors">
+                        <i id="soundIcon" class="fas fa-volume-up text-bebop-green"></i>
+                        <span id="soundText">SFX: ON</span>
+                    </button>
+
+                    <button onclick="toggleCRT()" class="px-3 py-1.5 bg-bebop-panel border border-bebop-dim hover:border-bebop-gold text-xs font-mono flex items-center gap-2 rounded transition-colors">
+                        <i class="fas fa-tv text-bebop-gold"></i>
+                        <span>CRT FX</span>
+                    </button>
+
+                    <button onclick="window.print()" class="px-3 py-1.5 bg-bebop-red/20 border border-bebop-red hover:bg-bebop-red hover:text-black text-bebop-red font-mono text-xs font-bold flex items-center gap-2 rounded transition-all">
+                        <i class="fas fa-print"></i>
+                        <span>PRINT CV</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Nastro Informativo Scorrevole (Ticker Line) -->
+            <div class="mt-4 bg-bebop-panel/80 border-y border-bebop-dim/30 py-1 px-3 overflow-hidden text-xs font-mono text-bebop-gold flex items-center">
+                <span class="shrink-0 font-bold mr-3 text-bebop-red">[STATUS]:</span>
+                <marquee class="whitespace-nowrap" scrollamount="6" id="statusMarquee">
+                    CURRENT ROLE: SYSADMIN AT CGIL RIMINI (SINCE DEC 14, 2023) // TRACK: SEATBELTS - ROAD TO THE WEST // SPECIALTIES: SQL QUERY & OPTIMIZATION, SERVER MANAGEMENT, NETWORK INFRASTRUCTURE, PROGRAMMING & DIGITAL ART
+                </marquee>
+            </div>
+        </header>
+
+        <!-- LAYOUT A GRIGLIA -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+            <!-- COLONNA SINISTRA: POSTER WANTED & INFORMAZIONI CHIAVE -->
+            <div class="lg:col-span-4 space-y-6">
+                
+                <!-- Wrapper Relativo per evitare il taglio del Banner WANTED -->
+                <div class="relative mt-4">
+                    <!-- Banner Wanted (Posizionato all'esterno del clip-corner) -->
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 z-30 bg-bebop-gold text-black font-orbitron font-extrabold text-[11px] sm:text-xs px-4 py-0.5 tracking-widest border border-black uppercase shadow-lg whitespace-nowrap">
+                        ★ WANTED SYSTEM ADMIN ★
+                    </div>
+
+                    <!-- Card Poster Bounty -->
+                    <div class="bg-bebop-card border-2 border-bebop-gold rounded-none p-4 pt-6 relative clip-corner box-glow-gold">
+                        
+                        <!-- Cornice Foto Profilo -->
+                        <div class="relative mx-auto w-48 h-48 sm:w-56 sm:h-56 border-4 border-bebop-cyan bg-black overflow-hidden group">
+                            <img src="C:\Users\alessandro.marcatell\Downloads\mycv\profile.png"
+                                 alt="Alessandro Marcatelli" 
+                                 class="w-full h-full object-cover filter contrast-125 grayscale hover:grayscale-0 transition-all duration-500"
+                                 onerror="this.src='https://placehold.co/400x400/161925/00f3ff?text=ALESSANDRO+M.'" />
+                            <div class="absolute inset-0 border-2 border-bebop-cyan/40 pointer-events-none"></div>
+                            <div class="absolute inset-0 flex items-center justify-center opacity-40 pointer-events-none group-hover:opacity-80 transition-opacity">
+                                <div class="w-full h-0.5 bg-bebop-red/60"></div>
+                                <div class="h-full w-0.5 bg-bebop-red/60 absolute"></div>
+                                <div class="w-24 h-24 border border-bebop-cyan rounded-full absolute"></div>
+                            </div>
+                            <div class="absolute bottom-1 right-1 bg-black/80 px-2 py-0.5 font-mono text-[10px] text-bebop-green">
+                                SYSADMIN ACTIVE
+                            </div>
+                        </div>
+
+                        <!-- Nome e Ruolo -->
+                        <div class="text-center my-4">
+                            <h2 class="font-orbitron font-bold text-xl text-white tracking-wider">ALESSANDRO MARCATELLI</h2>
+                            <p class="font-mono text-sm text-bebop-cyan mt-0.5">// SYSADMIN</p>
+                        </div>
+
+                        <!-- Dettagli di Contatto Personali -->
+                        <div class="bg-bebop-bg border border-bebop-dim/50 p-3 space-y-2.5 font-mono text-xs">
+                            <div class="flex items-center gap-3 text-bebop-text hover:text-bebop-cyan transition-colors">
+                                <i class="fas fa-map-marker-alt text-bebop-red w-4 text-center"></i>
+                                <span>47843, Misano Adriatico (RN)</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-bebop-text hover:text-bebop-cyan transition-colors">
+                                <i class="fas fa-phone text-bebop-gold w-4 text-center"></i>
+                                <a href="tel:3914354648" class="hover:underline">391 435 4648</a>
+                            </div>
+                            <div class="flex items-center gap-3 text-bebop-text hover:text-bebop-cyan transition-colors">
+                                <i class="fas fa-envelope text-bebop-cyan w-4 text-center"></i>
+                                <a href="mailto:ale.marcatelli@gmail.com" class="hover:underline truncate">ale.marcatelli@gmail.com</a>
+                            </div>
+                            <div class="flex items-center gap-3 text-bebop-text hover:text-bebop-cyan transition-colors">
+                                <i class="fas fa-id-card text-bebop-green w-4 text-center"></i>
+                                <span>Patente: Categoria B</span>
+                            </div>
+                        </div>
+
+                        <!-- Azioni Rapide Contatto -->
+                        <div class="mt-4 grid grid-cols-2 gap-2 no-print">
+                            <a href="mailto:ale.marcatelli@gmail.com" onclick="playSound('click')" class="text-center py-2 bg-bebop-red text-black font-orbitron font-extrabold text-xs uppercase hover:bg-white transition-all">
+                                <i class="fas fa-paper-plane mr-1"></i> CONTATTA
+                            </a>
+                            <button onclick="copyEmail()" class="text-center py-2 bg-bebop-panel border border-bebop-cyan text-bebop-cyan font-orbitron font-bold text-xs uppercase hover:bg-bebop-cyan hover:text-black transition-all">
+                                <i class="fas fa-copy mr-1"></i> COPY EMAIL
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scheda Focus / Risultati Chiave -->
+                <div class="bg-bebop-panel border border-bebop-cyan/40 p-4 font-mono text-xs space-y-3 box-glow-cyan">
+                    <div class="text-bebop-gold font-orbitron font-bold flex justify-between items-center border-b border-bebop-dim/30 pb-2">
+                        <span><i class="fas fa-server mr-2"></i>PRIMARY FOCUS</span>
+                        <span class="text-[10px] bg-bebop-green/20 text-bebop-green px-1.5 py-0.5">ONLINE</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-bebop-bg p-2 border border-bebop-dim/30">
+                        <span class="text-white font-bold">SQL & Database Admin</span>
+                        <span class="text-bebop-gold text-[10px] bg-bebop-gold/10 px-2 py-0.5 border border-bebop-gold/40">ADVANCED</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-bebop-bg p-2 border border-bebop-dim/30">
+                        <span class="text-white font-bold">Server & Networking</span>
+                        <span class="text-bebop-cyan text-[10px] bg-bebop-cyan/10 px-2 py-0.5 border border-bebop-cyan/40">CORE ROLE</span>
+                    </div>
+
+                    <div class="flex justify-between items-center bg-bebop-bg p-2 border border-bebop-dim/30">
+                        <span class="text-white font-bold">Software Development</span>
+                        <span class="text-bebop-green text-[10px] bg-bebop-green/10 px-2 py-0.5 border border-bebop-green/40">SKILLED</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- COLONNA DESTRA: TAB PRINCIPALI (Esperienze, Skills, Terminale) -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- TABS DI NAVIGAZIONE -->
+                <div class="flex flex-wrap border-b-2 border-bebop-dim/40 gap-2 no-print">
+                    <button onclick="switchTab('exp')" id="tab-exp" class="tab-btn active font-orbitron font-extrabold text-sm px-5 py-2.5 bg-bebop-red text-black border-t-2 border-x-2 border-bebop-red tracking-wider uppercase transition-all">
+                        <i class="fas fa-briefcase mr-2"></i>Esperienze Lavorative
+                    </button>
+                    <button onclick="switchTab('skills')" id="tab-skills" class="tab-btn font-orbitron font-extrabold text-sm px-5 py-2.5 bg-bebop-panel text-bebop-dim border-t-2 border-x-2 border-transparent hover:text-white tracking-wider uppercase transition-all">
+                        <i class="fas fa-microchip mr-2"></i>Skills & Formazione
+                    </button>
+                </div>
+
+                <!-- CONTENUTO TAB 1: ESPERIENZE LAVORATIVE -->
+                <div id="content-exp" class="tab-content space-y-6">
+
+                    <!-- Ruolo 1: CGIL Rimini -->
+                    <div class="bg-bebop-panel border-2 border-bebop-gold p-5 relative box-glow-gold">
+                        <div class="absolute -top-3 right-4 bg-bebop-gold text-black font-mono font-bold text-[10px] px-2.5 py-0.5 uppercase tracking-wider">
+                            ACTIVE ROLE // CURRENT
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-bebop-dim/30 pb-3 mb-4">
+                            <div>
+                                <h3 class="font-orbitron font-bold text-xl text-bebop-gold glow-gold">Amministratore di Sistema</h3>
+                                <p class="font-mono text-sm text-bebop-cyan">CGIL Rimini</p>
+                            </div>
+                            <span class="font-mono text-xs bg-bebop-bg border border-bebop-gold text-bebop-gold px-3 py-1 mt-2 sm:mt-0 inline-block w-fit">
+                                14 Dicembre 2023 — Attuale
+                            </span>
+                        </div>
+
+                        <ul class="space-y-2.5 font-rajdhani text-base text-bebop-text">
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-gold mt-1">▸</span>
+                                <span>Gestione e manutenzione dell'infrastruttura di rete, server e basi di dati dell'organizzazione.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-gold mt-1">▸</span>
+                                <span>Amministrazione server aziendali, gestione utenti, permessi e sicurezza delle reti.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-gold mt-1">▸</span>
+                                <span>Ottimizzazione, manutenzione e gestione avanzata dei database SQL.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-gold mt-1">▸</span>
+                                <span>Supporto e risoluzione tempestiva di problematiche sistemistiche e tecniche complesse.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Ruolo 2: Bagnino -->
+                    <div class="bg-bebop-panel border border-bebop-dim/50 p-5 relative">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-bebop-dim/30 pb-3 mb-4">
+                            <div>
+                                <h3 class="font-orbitron font-bold text-xl text-bebop-cyan">Bagnino in stabilimenti balneari</h3>
+                                <p class="font-mono text-sm text-bebop-amber">Bagni Nettuno 122A | Riccione</p>
+                            </div>
+                            <span class="font-mono text-xs bg-bebop-bg border border-bebop-dim/50 px-3 py-1 text-bebop-dim mt-2 sm:mt-0 inline-block w-fit">
+                                Giugno 2023 - Agosto 2023
+                            </span>
+                        </div>
+
+                        <ul class="space-y-2.5 font-rajdhani text-base text-bebop-text">
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Sistemazione degli arredi all'apertura della struttura, manutenzione e pulizia generale della spiaggia e delle zone di ricezione.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Controllo dell'utenza in tutte le aree pubbliche per evitare situazioni di rischio o pericolo.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Sorveglianza e regolamentazione attiva dell'attività balneare.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Ruolo 3: Cameriere -->
+                    <div class="bg-bebop-panel border border-bebop-dim/50 p-5 relative">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-bebop-dim/30 pb-3 mb-4">
+                            <div>
+                                <h3 class="font-orbitron font-bold text-xl text-bebop-cyan">Aiuto cameriere di ristorante</h3>
+                                <p class="font-mono text-sm text-bebop-amber">Ristorante - Pizzeria da Gianni | Riccione</p>
+                            </div>
+                            <span class="font-mono text-xs bg-bebop-bg border border-bebop-dim/50 px-3 py-1 text-bebop-dim mt-2 sm:mt-0 inline-block w-fit">
+                                Aprile 2022 - Agosto 2022
+                            </span>
+                        </div>
+
+                        <ul class="space-y-2.5 font-rajdhani text-base text-bebop-text">
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Servizio al tavolo di portate multiple a mano o con carrello.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Supporto continuo alle operazioni di apertura e chiusura del locale.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-bebop-cyan mt-1">▸</span>
+                                <span>Igienizzazione dei tavoli, allestimento e cambio dei coperti.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <!-- CONTENUTO TAB 2: SKILLS E FORMAZIONE -->
+                <div id="content-skills" class="tab-content space-y-6 hidden">
+
+                    <!-- Card In Evidenza -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-bebop-panel border border-bebop-gold p-4 relative box-glow-gold">
+                            <div class="text-xs font-mono text-bebop-gold uppercase tracking-wider mb-1">// SYSTEM HIGHLIGHT</div>
+                            <h4 class="font-orbitron font-bold text-lg text-white mb-2">SQL & Data Management</h4>
+                            <p class="font-rajdhani text-sm text-bebop-text">
+                                Significativo miglioramento delle competenze sulla gestione di database SQL complessi, query optimization e manutenzione tabelle lavorando alla CGIL Rimini.
+                            </p>
+                        </div>
+
+                        <div class="bg-bebop-panel border border-bebop-cyan p-4 relative box-glow-cyan">
+                            <div class="text-xs font-mono text-bebop-cyan uppercase tracking-wider mb-1">// SYSTEM HIGHLIGHT</div>
+                            <h4 class="font-orbitron font-bold text-lg text-white mb-2">Gestione Server & Networking</h4>
+                            <p class="font-rajdhani text-sm text-bebop-text">
+                                Amministrazione quotidiana di server aziendali, gestione permessi utenti, configurazione reti e risoluzione di problemi di sicurezza.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Sezione Linguaggi e Tecnologie (Senza percentuali) -->
+                    <div class="bg-bebop-panel border border-bebop-dim/50 p-5 space-y-4">
+                        <h3 class="font-orbitron font-bold text-base text-bebop-cyan border-b border-bebop-dim/30 pb-2">
+                            <i class="fas fa-code mr-2"></i>LINGUAGGI E TECNOLOGIE
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+                            <div class="bg-bebop-bg p-3 border border-bebop-gold/50 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-database text-bebop-gold"></i>
+                                    <span class="text-white font-bold">SQL (Database Management)</span>
+                                </div>
+                                <span class="text-bebop-gold text-[11px] bg-bebop-gold/10 px-2 py-0.5 border border-bebop-gold/40">AVANZATO</span>
+                            </div>
+
+                            <div class="bg-bebop-bg p-3 border border-bebop-cyan/50 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-server text-bebop-cyan"></i>
+                                    <span class="text-white font-bold">Server Administration</span>
+                                </div>
+                                <span class="text-bebop-cyan text-[11px] bg-bebop-cyan/10 px-2 py-0.5 border border-bebop-cyan/40">AVANZATO</span>
+                            </div>
+
+                            <div class="bg-bebop-bg p-3 border border-bebop-dim/40 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-js-square text-yellow-400"></i>
+                                    <span class="text-white font-bold">JavaScript</span>
+                                </div>
+                                <span class="text-bebop-green text-[11px] bg-bebop-green/10 px-2 py-0.5 border border-bebop-green/40">INTERMEDIO</span>
+                            </div>
+
+                            <div class="bg-bebop-bg p-3 border border-bebop-dim/40 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-code text-bebop-cyan"></i>
+                                    <span class="text-white font-bold">C#</span>
+                                </div>
+                                <span class="text-bebop-green text-[11px] bg-bebop-green/10 px-2 py-0.5 border border-bebop-green/40">INTERMEDIO</span>
+                            </div>
+
+                            <div class="bg-bebop-bg p-3 border border-bebop-dim/40 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-php text-indigo-400"></i>
+                                    <span class="text-white font-bold">PHP</span>
+                                </div>
+                                <span class="text-bebop-green text-[11px] bg-bebop-green/10 px-2 py-0.5 border border-bebop-green/40">INTERMEDIO</span>
+                            </div>
+
+                            <div class="bg-bebop-bg p-3 border border-bebop-dim/40 flex justify-between items-center">
+                                <div class="flex items-center gap-2">
+                                    <i class="fab fa-python text-blue-400"></i>
+                                    <span class="text-white font-bold">Python & C++</span>
+                                </div>
+                                <span class="text-bebop-green text-[11px] bg-bebop-green/10 px-2 py-0.5 border border-bebop-green/40">INTERMEDIO</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sezione Diploma & Formazione Artistica -->
+                    <div class="bg-bebop-panel border border-bebop-dim/50 p-5 space-y-4">
+                        <div class="border-b border-bebop-dim/30 pb-2">
+                            <span class="text-xs font-mono text-bebop-green uppercase tracking-wider">// ACADEMIC DEGREE</span>
+                            <h3 class="font-orbitron font-bold text-lg text-white mt-1">Diploma Indirizzo "Informatica e Telecomunicazioni"</h3>
+                            <p class="font-mono text-sm text-bebop-gold">ITTS "O. Belluzzi - L. Da Vinci", Rimini (Conseguito 2022)</p>
+                        </div>
+
+                        <div class="pt-2">
+                            <span class="text-xs font-mono text-bebop-amber uppercase tracking-wider">// CONTINUOUS STUDY</span>
+                            <h4 class="font-orbitron font-bold text-base text-white mt-1">Concept Art, Character Design & Illustration</h4>
+                            <p class="font-rajdhani text-sm text-bebop-text mt-1">
+                                Studio continuo e approfondito di tecniche di Character Design e Concept Art per produzioni digitali ed illustrazione.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- PIÈ DI PAGINA -->
+        <footer class="mt-12 pt-6 border-t border-bebop-dim/30 text-center relative">
+            <div class="font-orbitron font-black text-xl sm:text-2xl text-bebop-gold tracking-widest uppercase mb-2 glow-gold">
+                YOU'RE GONNA CARRY THAT WEIGHT...
+            </div>
+            <p class="font-mono text-xs text-bebop-dim">
+                © 2026 ALESSANDRO MARCATELLI // SYSADMIN & DEVELOPER // 
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Collegamento al file JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>
